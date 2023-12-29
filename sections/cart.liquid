@@ -1,0 +1,38 @@
+{% for item in cart.items %}
+  <div class="cart-item">
+    <span>{{ item.title }}</span>
+    <span>{{ item.price | money }}</span>
+    <span><input type="number" value="{{ item.quantity }}" min="1" data-line="{{ forloop.index }}" class="update-quantity"></span>
+    <span><button data-line="{{ forloop.index }}" class="remove-item">Remove</button></span>
+  </div>
+{% endfor %}
+
+<script>
+  document.addEventListener('DOMContentLoaded', function () {
+    const updateQuantityInputs = document.querySelectorAll('.update-quantity');
+    const removeItemButtons = document.querySelectorAll('.remove-item');
+
+    updateQuantityInputs.forEach(input => {
+      input.addEventListener('change', function () {
+        const line = input.dataset.line;
+        const newQuantity = parseInt(input.value, 10);
+
+        Shopify.changeItem(line, newQuantity, function (cart) {
+        
+          console.log('Item quantity updated:', cart);
+        });
+      });
+    });
+
+    removeItemButtons.forEach(button => {
+      button.addEventListener('click', function () {
+        const line = button.dataset.line;
+
+        Shopify.removeItem(line, function (cart) {
+           
+          console.log('Item removed from cart:', cart);
+        });
+      });
+    });
+  });
+</script>
